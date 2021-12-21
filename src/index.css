@@ -114,6 +114,13 @@ h1 {
   box-shadow: 3.1px 6.2px 6.2px hsl(0deg 0% 0% / 0.4);
 }
 
+#token {
+}
+
+#token h1 {
+  font-size: 1rem;
+}
+
 button {
   cursor: pointer;
   background-color: #000;

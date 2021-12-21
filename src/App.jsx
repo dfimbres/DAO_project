@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 // import thirdweb
 import { ThirdwebSDK } from "@3rdweb/sdk";
 import { useWeb3 } from "@3rdweb/hooks";
+import Coin from './Coin';
 
 const sdk = new ThirdwebSDK("rinkeby");
 
@@ -16,6 +17,10 @@ const tokenModule = sdk.getTokenModule(
 
 const voteModule = sdk.getVoteModule(
   "0x742C9515CFcac291Ef362A69516a1fff341c4833",
+);
+
+const currencyModule = sdk.getCurrencyModule(
+  "0x571Ff3EF84cfE41f452c40aAab6805F1DdE1D39b",
 );
 
 const App = () => {
@@ -37,6 +42,21 @@ const App = () => {
 const [proposals, setProposals] = useState([]);
 const [isVoting, setIsVoting] = useState(false);
 const [hasVoted, setHasVoted] = useState(false);
+const [currency, setCurrency] = useState({});
+
+ useEffect(() => {
+     currencyModule
+     .get()
+    .then((coin) => {
+      console.log("🚀 coin", coin)
+      setCurrency(coin);
+    })
+    .catch((err) => {
+      console.error("failed to get coin", err);
+    });
+
+    
+  }, []);
 
 // Retreive all our existing proposals from the contract.
 useEffect(() => {
@@ -186,6 +206,10 @@ const memberList = useMemo(() => {
     return (
       <div className="landing">
         <h1>Welcome to tapatio DAO 🇲🇽</h1>
+
+        <Coin name={currency.name} 
+          symbol={currency.symbol}/>
+        
         <button onClick={() => connectWallet("injected")} className="btn-hero">
           Connect your wallet
         </button>
