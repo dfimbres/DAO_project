@@ -14,6 +14,10 @@ const tokenModule = sdk.getTokenModule(
   "0x571Ff3EF84cfE41f452c40aAab6805F1DdE1D39b"
 );
 
+const voteModule = sdk.getVoteModule(
+  "0x742C9515CFcac291Ef362A69516a1fff341c4833",
+);
+
 const App = () => {
   // Use the connectWallet hook thirdweb gives us.
   const { connectWallet, address, error, provider } = useWeb3();
@@ -25,12 +29,56 @@ const App = () => {
 
   const [hasClaimedNFT, setHasClaimedNFT] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
+  // Holds the amount of token each member has in state.
+  const [memberTokenAmounts, setMemberTokenAmounts] = useState({});
+  // The array holding all of our members addresses.
+  const [memberAddresses, setMemberAddresses] = useState([]);
 
+const [proposals, setProposals] = useState([]);
+const [isVoting, setIsVoting] = useState(false);
+const [hasVoted, setHasVoted] = useState(false);
 
-// Holds the amount of token each member has in state.
-const [memberTokenAmounts, setMemberTokenAmounts] = useState({});
-// The array holding all of our members addresses.
-const [memberAddresses, setMemberAddresses] = useState([]);
+// Retreive all our existing proposals from the contract.
+useEffect(() => {
+  if (!hasClaimedNFT) {
+    return;
+  }
+  // A simple call to voteModule.getAll() to grab the proposals.
+  voteModule
+    .getAll()
+    .then((proposals) => {
+      // Set state!
+      setProposals(proposals);
+      console.log("🌈 Proposals:", proposals)
+    })
+    .catch((err) => {
+      console.error("failed to get proposals", err);
+    });
+}, [hasClaimedNFT]);
+
+// We also need to check if the user already voted.
+useEffect(() => {
+  if (!hasClaimedNFT) {
+    return;
+  }
+
+  // If we haven't finished retreieving the proposals from the useEffect above
+  // then we can't check if the user voted yet!
+  if (!proposals.length) {
+    return;
+  }
+
+  // Check if the user has already voted on the first proposal.
+  voteModule
+    .hasVoted(proposals[0].proposalId, address)
+    .then((hasVoted) => {
+      setHasVoted(hasVoted);
+      console.log("🥵 User has already voted")
+    })
+    .catch((err) => {
+      console.error("failed to check if wallet has voted", err);
+    });
+}, [hasClaimedNFT, proposals, address]);
 
 // A fancy function to shorten someones wallet address, no need to show the whole thing. 
 const shortenAddress = (str) => {
