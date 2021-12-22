@@ -45,8 +45,8 @@ const [hasVoted, setHasVoted] = useState(false);
 const [currency, setCurrency] = useState({});
 
  useEffect(() => {
-     currencyModule
-     .get()
+    currencyModule
+    .getValue(10)
     .then((coin) => {
       console.log("🚀 coin", coin)
       setCurrency(coin);
@@ -54,8 +54,6 @@ const [currency, setCurrency] = useState({});
     .catch((err) => {
       console.error("failed to get coin", err);
     });
-
-    
   }, []);
 
 // Retreive all our existing proposals from the contract.
@@ -208,7 +206,8 @@ const memberList = useMemo(() => {
         <h1>Welcome to tapatio DAO 🇲🇽</h1>
 
         <Coin name={currency.name} 
-          symbol={currency.symbol}/>
+          symbol={currency.symbol}
+          value={currency.displayValue}/>
         
         <button onClick={() => connectWallet("injected")} className="btn-hero">
           Connect your wallet

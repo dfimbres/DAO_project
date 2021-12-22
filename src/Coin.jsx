@@ -1,6 +1,6 @@
 // import { useEffect, useMemo, useState } from "react";
 
-const Coin = ({ name, symbol }) => {
+const Coin = ({ name, symbol, value }) => {
   console.log("👋 KDMLASKMDLASKDMLAKSmd:", name, symbol)
 
   return (
@@ -9,7 +9,10 @@ const Coin = ({ name, symbol }) => {
       <br/> 
       {name} 
       <br/>
-      Symbol:  ${symbol}</h1>
+      Symbol:  ${symbol}
+      <br/>
+      Valued at 🚀 ${value}
+      </h1>
     </div>);
 };
 
